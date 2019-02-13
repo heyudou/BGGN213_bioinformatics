@@ -32,7 +32,7 @@ barplot(fc$Count,names.arg=fc$Feature,
         main="Number of features in the mouse GRCm38 genome")
 
 #reset par
-dev.off()
+#dev.off()
 #section 3A Using color in plots
 
 
@@ -80,3 +80,4 @@ plot(meth$promoter.meth, meth$gene.meth,
      ylab="Gene Methylation", 
      xlab="Promoter Methylation", 
      col=mycols)
+

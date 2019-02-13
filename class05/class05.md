@@ -36,13 +36,7 @@ barplot(fc$Count,names.arg=fc$Feature,
 
 ``` r
 #reset par
-dev.off()
-```
-
-    ## null device 
-    ##           1
-
-``` r
+#dev.off()
 #section 3A Using color in plots
 
 
@@ -51,11 +45,20 @@ barplot(mf$Count,names.arg=mf$Sample,
         las=2,
         col=rainbow(nrow(mf)),
         ylab="Counts")
+```
+
+![](class05_files/figure-markdown_github/unnamed-chunk-2-3.png)
+
+``` r
 barplot(mf$Count,names.arg=mf$Sample,
         las=2,
         col=c("blue2","red2"),
         ylab="Counts")
+```
 
+![](class05_files/figure-markdown_github/unnamed-chunk-2-4.png)
+
+``` r
 #section 3B Coloring by value
 genes <- read.table("bimm143_05_rstats/up_down_expression.txt",header=TRUE,sep="\t")
 table(genes$State)
@@ -69,6 +72,11 @@ table(genes$State)
 plot(genes$Condition1,genes$Condition2,
      xlab="Expression Condiiton1", ylab="Expression Condiiton2",
      col=genes$State)
+```
+
+![](class05_files/figure-markdown_github/unnamed-chunk-2-5.png)
+
+``` r
 palette()
 ```
 
@@ -91,12 +99,20 @@ meth_noz <- meth$expression > 0 # select entries with expressions greater than 0
 plot(meth$gene.meth[meth_noz],meth$expression[meth_noz],pch=20,
      col=densCols(meth$gene.meth[meth_noz],meth$expression[meth_noz])
      )
+```
 
+![](class05_files/figure-markdown_github/unnamed-chunk-2-6.png)
+
+``` r
 plot(meth$gene.meth[meth_noz],meth$expression[meth_noz],pch=20,
      col=densCols(meth$gene.meth[meth_noz],meth$expression[meth_noz],
      colramp =colorRampPalette(c("blue", "green","red")))
 )
+```
 
+![](class05_files/figure-markdown_github/unnamed-chunk-2-7.png)
+
+``` r
 #section 4A mapping colors
 # source the provided function so we can use it
 source("bimm143_05_rstats/color_to_value_map.r")
@@ -109,3 +125,5 @@ plot(meth$promoter.meth, meth$gene.meth,
      xlab="Promoter Methylation", 
      col=mycols)
 ```
+
+![](class05_files/figure-markdown_github/unnamed-chunk-2-8.png)
