@@ -1,3 +1,11 @@
+#' ---
+#' title:"Class5 R graphics"
+#' author: "Phoebe"
+#' date: "fri Jan 25 13:30:02 2019"
+#' output: github_document
+#' ---
+
+
 
 #' Class 05 Graphics and plots with R
 #' This is some narative text that I can style **bold** and *italic* and 
