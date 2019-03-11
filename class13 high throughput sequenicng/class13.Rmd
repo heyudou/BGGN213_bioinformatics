@@ -1,0 +1,25 @@
+---
+title: "genome bioinformatics"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+mxl <- read.csv("mexican_genome_sample.csv")
+head(mxl)
+table(mxl$Genotype..forward.strand.)/nrow(mxl)
+```
+
+Phred score calculation
+```{r}
+library(seqinr)
+library(gtools)
+nums <- s2c("DDDDCDEDCDDDDBBDDDCC@")
+phred <- asc(nums)-33
+nums
+phred
+```
+

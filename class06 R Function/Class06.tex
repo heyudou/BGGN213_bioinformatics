@@ -1,0 +1,325 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Class06},
+            pdfauthor={Phoebe He},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Class06}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Phoebe He}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{1/25/2019}
+
+
+\begin{document}
+\maketitle
+
+\subsection{File reading(again!)}\label{file-readingagain}
+
+Here we try to use \textbf{read.table()} and friends to input some
+example data in to R lets insert a code chunk.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data1 <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"https://bioboot.github.io/bggn213_S18/class-material/test1.txt"}\NormalTok{)}
+\NormalTok{data2 <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{'test2.txt'}\NormalTok{,}\DataTypeTok{sep=}\StringTok{'$'}\NormalTok{,}\DataTypeTok{header =}\NormalTok{T)}
+\NormalTok{data3 <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\StringTok{'test3.txt'}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Try assign a function
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{a=}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, }\DataTypeTok{b=}\KeywordTok{seq}\NormalTok{(}\DecValTok{200}\NormalTok{,}\DecValTok{400}\NormalTok{,}\DataTypeTok{length=}\DecValTok{10}\NormalTok{),}\DataTypeTok{c=}\DecValTok{11}\OperatorTok{:}\DecValTok{20}\NormalTok{,}\DataTypeTok{d=}\OtherTok{NA}\NormalTok{) }
+\NormalTok{df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     a        b  c  d
+## 1   1 200.0000 11 NA
+## 2   2 222.2222 12 NA
+## 3   3 244.4444 13 NA
+## 4   4 266.6667 14 NA
+## 5   5 288.8889 15 NA
+## 6   6 311.1111 16 NA
+## 7   7 333.3333 17 NA
+## 8   8 355.5556 18 NA
+## 9   9 377.7778 19 NA
+## 10 10 400.0000 20 NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{normalize <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(a) \{}
+\NormalTok{  a <-}\StringTok{ }\NormalTok{(a }\OperatorTok{-}\StringTok{ }\KeywordTok{min}\NormalTok{(a)) }\OperatorTok{/}\StringTok{ }\NormalTok{(}\KeywordTok{max}\NormalTok{(a) }\OperatorTok{-}\StringTok{ }\KeywordTok{min}\NormalTok{(a))}
+\NormalTok{\}}
+\NormalTok{df}\OperatorTok{$}\NormalTok{a <-}\StringTok{ }\KeywordTok{normalize}\NormalTok{(df}\OperatorTok{$}\NormalTok{a)}
+\NormalTok{df}\OperatorTok{$}\NormalTok{b <-}\StringTok{ }\KeywordTok{normalize}\NormalTok{(df}\OperatorTok{$}\NormalTok{b)}
+\NormalTok{df}\OperatorTok{$}\NormalTok{c <-}\StringTok{ }\KeywordTok{normalize}\NormalTok{(df}\OperatorTok{$}\NormalTok{c)}
+\NormalTok{df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            a         b         c  d
+## 1  0.0000000 0.0000000 0.0000000 NA
+## 2  0.1111111 0.1111111 0.1111111 NA
+## 3  0.2222222 0.2222222 0.2222222 NA
+## 4  0.3333333 0.3333333 0.3333333 NA
+## 5  0.4444444 0.4444444 0.4444444 NA
+## 6  0.5555556 0.5555556 0.5555556 NA
+## 7  0.6666667 0.6666667 0.6666667 NA
+## 8  0.7777778 0.7777778 0.7777778 NA
+## 9  0.8888889 0.8888889 0.8888889 NA
+## 10 1.0000000 1.0000000 1.0000000 NA
+\end{verbatim}
+
+Next try to optimize the function
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\DataTypeTok{a=}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{, }\DataTypeTok{b=}\KeywordTok{seq}\NormalTok{(}\DecValTok{200}\NormalTok{,}\DecValTok{400}\NormalTok{,}\DataTypeTok{length=}\DecValTok{10}\NormalTok{),}\DataTypeTok{c=}\DecValTok{11}\OperatorTok{:}\DecValTok{20}\NormalTok{,}\DataTypeTok{d=}\OtherTok{NA}\NormalTok{) }
+\NormalTok{df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     a        b  c  d
+## 1   1 200.0000 11 NA
+## 2   2 222.2222 12 NA
+## 3   3 244.4444 13 NA
+## 4   4 266.6667 14 NA
+## 5   5 288.8889 15 NA
+## 6   6 311.1111 16 NA
+## 7   7 333.3333 17 NA
+## 8   8 355.5556 18 NA
+## 9   9 377.7778 19 NA
+## 10 10 400.0000 20 NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rescale <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
+\NormalTok{ rng <-}\KeywordTok{range}\NormalTok{(x)}
+\NormalTok{ (x }\OperatorTok{-}\StringTok{ }\NormalTok{rng[}\DecValTok{1}\NormalTok{]) }\OperatorTok{/}\StringTok{ }\NormalTok{(rng[}\DecValTok{2}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{rng[}\DecValTok{1}\NormalTok{])}
+\NormalTok{\}}
+\NormalTok{df}\OperatorTok{$}\NormalTok{a <-}\StringTok{ }\KeywordTok{normalize}\NormalTok{(df}\OperatorTok{$}\NormalTok{a)}
+\NormalTok{df}\OperatorTok{$}\NormalTok{b <-}\StringTok{ }\KeywordTok{normalize}\NormalTok{(df}\OperatorTok{$}\NormalTok{b)}
+\NormalTok{df}\OperatorTok{$}\NormalTok{c <-}\StringTok{ }\KeywordTok{normalize}\NormalTok{(df}\OperatorTok{$}\NormalTok{c)}
+\NormalTok{df}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            a         b         c  d
+## 1  0.0000000 0.0000000 0.0000000 NA
+## 2  0.1111111 0.1111111 0.1111111 NA
+## 3  0.2222222 0.2222222 0.2222222 NA
+## 4  0.3333333 0.3333333 0.3333333 NA
+## 5  0.4444444 0.4444444 0.4444444 NA
+## 6  0.5555556 0.5555556 0.5555556 NA
+## 7  0.6666667 0.6666667 0.6666667 NA
+## 8  0.7777778 0.7777778 0.7777778 NA
+## 9  0.8888889 0.8888889 0.8888889 NA
+## 10 1.0000000 1.0000000 1.0000000 NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rescale2 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) \{}
+\NormalTok{ rng <-}\KeywordTok{range}\NormalTok{(x,}\DataTypeTok{na.rm=}\NormalTok{T)}
+\NormalTok{ (x }\OperatorTok{-}\StringTok{ }\NormalTok{rng[}\DecValTok{1}\NormalTok{]) }\OperatorTok{/}\StringTok{ }\NormalTok{(rng[}\DecValTok{2}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{rng[}\DecValTok{1}\NormalTok{])}
+\NormalTok{\}}
+\KeywordTok{rescale2}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\OtherTok{NA}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{10}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0000000 0.1111111        NA 0.2222222 1.0000000
+\end{verbatim}
+
+Another way to optimize things
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{rescale3 <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x, }\DataTypeTok{na.rm=}\OtherTok{TRUE}\NormalTok{, }\DataTypeTok{plot=}\OtherTok{FALSE}\NormalTok{) \{}
+  \ControlFlowTok{if}\NormalTok{(na.rm) \{}
+\NormalTok{    rng <-}\KeywordTok{range}\NormalTok{(x, }\DataTypeTok{na.rm=}\NormalTok{T)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+\NormalTok{    rng <-}\KeywordTok{range}\NormalTok{(x)}
+\NormalTok{  \}}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"Hello"}\NormalTok{)}
+\NormalTok{  answer <-}\StringTok{ }\NormalTok{(x }\OperatorTok{-}\StringTok{ }\NormalTok{rng[}\DecValTok{1}\NormalTok{]) }\OperatorTok{/}\StringTok{ }\NormalTok{(rng[}\DecValTok{2}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{rng[}\DecValTok{1}\NormalTok{])}
+  \CommentTok{#return(answer)}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"is it me you are looking for?"}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{(plot) \{}
+    \KeywordTok{print}\NormalTok{(}\StringTok{"please don't ever sing again"}\NormalTok{)}
+\NormalTok{  \}}
+  \KeywordTok{plot}\NormalTok{(answer, }\DataTypeTok{typ=}\StringTok{"b"}\NormalTok{, }\DataTypeTok{lwd=}\DecValTok{4}\NormalTok{)}
+  \KeywordTok{print}\NormalTok{(}\StringTok{"I can see it in ..."}\NormalTok{)}
+  \KeywordTok{return}\NormalTok{(answer)}
+\NormalTok{\}}
+\KeywordTok{rescale3}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{,}\DataTypeTok{plot=}\OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Hello"
+## [1] "is it me you are looking for?"
+## [1] "please don't ever sing again"
+\end{verbatim}
+
+\includegraphics{Class06_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{verbatim}
+## [1] "I can see it in ..."
+\end{verbatim}
+
+\begin{verbatim}
+##  [1] 0.0000000 0.1111111 0.2222222 0.3333333 0.4444444 0.5555556 0.6666667
+##  [8] 0.7777778 0.8888889 1.0000000
+\end{verbatim}
+
+Section B
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(bio3d)}
+\NormalTok{s1 <-}\StringTok{ }\KeywordTok{read.pdb}\NormalTok{(}\StringTok{"4AKE"}\NormalTok{) }\CommentTok{# kinase with drug}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Note: Accessing on-line PDB file
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{s1.chainA <-}\StringTok{ }\KeywordTok{trim.pdb}\NormalTok{(s1, }\DataTypeTok{chain=}\StringTok{"A"}\NormalTok{, }\DataTypeTok{elety=}\StringTok{"CA"}\NormalTok{)}
+\NormalTok{s1.b <-}\StringTok{ }\NormalTok{s1.chainA}\OperatorTok{$}\NormalTok{atom}\OperatorTok{$}\NormalTok{b}
+\KeywordTok{plotb3}\NormalTok{(s1.b, }\DataTypeTok{sse=}\NormalTok{s1.chainA, }\DataTypeTok{typ=}\StringTok{"l"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"Bfactor"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Class06_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+The number of atoms in this pdb 3459
+
+
+\end{document}

@@ -1,0 +1,49 @@
+---
+title: "Lec6HW_Phoebe_He"
+author: "Phoebe He"
+date: "1/25/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Define function
+
+The function below is able to take in an ID from PDB and plot out the corresponding protein's chian A's alpha carbon's Bfactor level.
+The inputs are the PDB ID of the desired protein, in string.
+To use the function, simply put in the PDB ID of your desired protein and run plot_pdb(your_input_PDB_ID)
+The output is a plot showing the Bfactor trend levels of the alpha carbons on chain A of the input protin.
+The plot also marks the regions for alpha helices and beta sheets.
+```{r}
+# Below defines function plot_pdb
+library(bio3d)
+plot_pdb <- function(x) {# The inputs are the PDB ID of the protein
+  s1.chainA <- trim.pdb(read.pdb(x), chain="A", elety="CA")
+  s1.b <- s1.chainA$atom$b
+  plotb3(s1.b, 
+         sse=s1.chainA,  # This line of code makrs the grey/black boxex on the top and bottom of the chart, which are indicators for regions of alpha helices(black) and beta sheets(grey)
+         typ="l", 
+         ylab="Bfactor")
+}
+
+# Test the function with three different inputs
+plot_pdb("4AKE")
+plot_pdb("1AKE") 
+plot_pdb("1E4Y")
+```
+
+
+##Mock Bonus: plot overlays
+
+This mock bonus uses points to overlay the Bfactor plots of chain A carbon items of protien B(red) on top of same plot of protein A(black).
+However, only protein A's alpha helices and beta sheets are labeled in the graph.
+```{r}
+s3 <- read.pdb("1E4Y") # this is protein B
+s3.chainA <- trim.pdb(s3, chain="A", elety="CA")
+s3.b <- s3.chainA$atom$b
+plot_pdb("1AKE")# this is protein A
+points(s3.b, typ='l',col="red")
+```
+

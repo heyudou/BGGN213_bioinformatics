@@ -1,0 +1,28 @@
+---
+title: "Class11_structural biology"
+author: "Phoebe He"
+date: "2/15/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1.1 PDB statistics
+
+```{r}
+stats <- read.csv("Data Export Summary.csv",row.names=1)
+stats
+```
+Q1: Determine the percentage of structures solved by X-Ray and Electron Microscopy. Also can you determine what proportion of structures are protein?
+```{r}
+pre.by.method <- round(stats$Total/sum(stats$Total)*100,2)
+names(pre.by.method) <- rownames(stats)
+pre.by.method
+protein <- sum(stats$Proteins)/sum(stats$Total)*100
+paste0("percent of the structures that are protein = ",round(protein,2),"%")
+```
+
+Q2: Type HIV in the PDB website search box on the home page and determine how many HIV-1 protease structures are in the current PDB?
+*Found 128*

@@ -1,0 +1,59 @@
+---
+title: "class18"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(bio3d)
+seqs <- read.fasta("~/Downloads/lecture18_sequences.fa")
+seqs
+```
+```{r}
+## Calculate positional identity scores
+ide <- conserv(seqs$ali, method="identity")
+mutant.sites <- which(ide < 1) 
+
+## Exclude gap possitions from analysis
+gaps <- gap.inspect(seqs)
+mutant.sites <- mutant.sites[mutant.sites %in% gaps$f.inds]
+mutant.sites
+```
+
+```{r}
+## Make a "names" label for our output sequences (one per mutant)
+mutant.names <- paste0(seqs$ali["P53_wt",mutant.sites],
+                       mutant.sites,
+                       seqs$ali["P53_mutant",mutant.sites])
+
+mutant.names
+```
+
+
+```{r}
+## Sequence positions surounding each mutant site
+start.position <- mutant.sites - 8
+end.position <-  mutant.sites + 8
+
+# Blank matrix to store sub-sequences
+store.seqs <- matrix("-", nrow=length(mutant.sites), ncol=17)
+rownames(store.seqs) <- mutant.names
+
+## Extract each sub-sequence
+for(i in 1:length(mutant.sites)) {
+  store.seqs[i,] <- seqs$ali["P53_mutant",start.position[i]:end.position[i]]
+}
+
+store.seqs
+```
+
+```{r}
+## First blank out the gap positions 
+store.seqs[store.seqs == "-"] <- ""
+
+## Output a FASTA file for further analysis
+write.fasta(seqs=store.seqs, ids=mutant.names, file="subsequences.fa")
+```

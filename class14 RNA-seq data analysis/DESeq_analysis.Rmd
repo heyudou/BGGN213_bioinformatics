@@ -1,0 +1,123 @@
+---
+title: "DESeq_analysis"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(BiocInstaller)
+library(DESeq2)
+
+counts <- read.csv("data/airway_scaledcounts.csv", stringsAsFactors = FALSE)
+metadata <-  read.csv("data/airway_metadata.csv", stringsAsFactors = FALSE)
+head(counts)
+head(metadata)
+```
+```{r}
+#Sanity check, make sure metadata corresponds to counts
+metadata$id == colnames(counts)[-1]
+#use function "all" ot check if they are all true
+all(metadata$id == colnames(counts)[-1])
+```
+
+```{r}
+control.ids <- metadata$id[metadata[,"dex"]=="control"]
+control.mean <- rowSums( counts[ ,control.ids] )/ncol(counts[ ,control.ids]) 
+names(control.mean) <- counts$ensgene
+
+treated.ids <- metadata$id[metadata[,"dex"]=="treated"]
+treated.mean <- rowSums( counts[ ,treated.ids] )/ncol(counts[ ,treated.ids]) 
+names(treated.mean) <- counts$ensgene
+
+mean.counts <- data.frame(treated.mean,control.mean)
+colSums(mean.counts)
+```
+
+```{r}
+plot(log(mean.counts$treated.mean),log(mean.counts$control.mean))
+```
+
+```{r}
+mean.counts$log2fc <- log2(mean.counts[,"treated.mean"]/mean.counts[,"control.mean"])
+head(mean.counts)
+```
+```{r}
+zero.vals <- which(mean.counts[,1:2]==0, arr.ind=TRUE)
+#arr.ind will return the row and column position of the ones
+head(zero.vals)
+to.rm <- unique(zero.vals[,1]) # remove cases where zero is in both
+head(to.rm)
+mycounts <- mean.counts[-to.rm,]
+head(mycounts)
+```
+```{r}
+up.ind <- mycounts$log2fc > 2
+down.ind <- mycounts$log2fc < (-2)
+sum(up.ind)
+sum(down.ind)
+head(mycounts[up.ind,])
+```
+## Add annotation data from emsembl annotation file
+```{r}
+anno <- read.csv("data/annotables_grch38.csv")
+head(anno)
+dim(anno)
+```
+
+Let's try-out the **merge()** function to add teh annotation data to our **mycounts** results
+```{r}
+mycounts.anno <- merge(x=mycounts,y=anno,by.x="row.names", by.y="ensgene")
+head(mycounts.anno)
+```
+#also try the annotation packages
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+```{r,eval=FALSE}
+# Install annoation packages and human annotation data
+source("http://bioconductor.org/biocLite.R")
+biocLite("AnnotationDbi")
+biocLite("org.Hs.eg.db")
+```
+
+```{r}
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+mycounts$symbol <- mapIds(org.Hs.eg.db,
+                     keys=row.names(mycounts),
+                     column="SYMBOL",
+                     keytype="ENSEMBL",
+                     multiVals="first")
+```
+
+```{r}
+dds <- DESeqDataSetFromMatrix(countData=counts, 
+                              colData=metadata, 
+                              design=~dex, 
+                              tidy=TRUE)
+dds <- DESeq(dds)
+```
+```{r}
+res <- results(dds)
+res
+```
+
+```{r}
+# Setup our custom point color vector 
+mycols <- rep("gray", nrow(res))
+mycols[ abs(res$log2FoldChange) > 2 ]  <- "red" 
+
+inds <- (res$padj < 0.01) & (abs(res$log2FoldChange) > 2 )
+mycols[ inds ] <- "blue"
+
+#Volcano plot with custom colors 
+plot( res$log2FoldChange,  -log(res$padj), 
+ col=mycols, ylab="-Log(P-value)", xlab="Log2(FoldChange)" )
+
+abline(v=c(-2,2), col="gray", lty=2)
+abline(h=-log(0.1), col="gray", lty=2)
+```
+

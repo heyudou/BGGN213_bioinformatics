@@ -1,0 +1,182 @@
+---
+title: "Class09_ML_PCA"
+author: "Phoebe He"
+date: "2/8/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Class9
+```{r}
+fna.data <- "WisconsinCancer.csv"
+wisc.df <- read.csv(fna.data)
+#View(wisc.df)
+```
+This is a dataset of physician evaluated, risk(Malignant or Benign) assigned breast cancer. We are going to clean up the data a bit by removing the last col "X", which are all NAs, and also remve the "diagnose" column to take out the predefined "answer" given by the physicians. (drop col 3 and 33)
+```{r}
+paste0('number of columns/parameters: ',ncol(wisc.df))
+#Q1. How many observations are in this dataset?
+paste0('number of rows/observations: ',nrow(wisc.df))
+
+#drop the unnecessary data
+wisc.data <- wisc.df[,3:32] # or use c(4,10,32) to select specific columns
+#add patient IDs as row names of our data
+rownames(wisc.data) <- wisc.df[,1]
+head(wisc.data)
+
+#Q2. How many variables/features in the data are suffixed with _mean?
+print("Q2. How many variables/features in the data are suffixed with _mean?")
+#colnames(wisc.data)
+length(grep('mean',colnames(wisc.data)))
+inds <- grep('mean',colnames(wisc.data))
+colnames(wisc.data[inds])
+
+#Q3. How many of the observations have a malignant diagnosis?
+print("Q3. How many of the observations have a malignant diagnosis?")
+table(wisc.df$diagnosis)
+```
+
+
+*PCA analysis*
+It is important to check if the data need to be scaled before performing PCA. Recall two common reasons for scaling data include:
+
+The input variables use different units of measurement.
+The input variables have significantly different variances.
+```{r}
+# Check column means and standard deviations
+print("Means")
+round(colMeans(wisc.data),2) 
+print("Standard Deviations")
+round(apply(wisc.data,2,sd),2)
+```
+
+```{r}
+wisc.pr <- prcomp(wisc.data,scale=TRUE)
+summary(wisc.pr)
+#the cummulative proportion just sums up as we go on
+```
+
+```{r}
+biplot(wisc.pr)
+```
+That is a useless plot, we need to make our own plot of PCA results
+```{r}
+plot(wisc.pr$x[,1],wisc.pr$x[,2],
+     xlab = "PC1", ylab = "PC2")
+```
+Lets use the expert diagnosis to color our plot
+```{r}
+plot(wisc.pr$x[,1],wisc.pr$x[,2],
+     xlab = "PC1", ylab = "PC2",
+     col=wisc.df$diagnosis)
+#malignant in red, benign in black
+```
+Now generate a similar plot for PC1 and PC3
+```{r}
+plot(wisc.pr$x[,1],wisc.pr$x[,3],
+     xlab = "PC1", ylab = "PC3",
+     col=wisc.df$diagnosis)
+```
+
+##make a scree-plot for our PCA results
+this plot will show the proportion of variance captured bpy PC
+```{r}
+variance <- wisc.pr$sdev^2
+#get the percentage of variance
+pve <- round(variance/sum(variance) *100,2)
+plot(pve, xlab = "Principal Component", 
+     ylab = "Proportion of Variance Explained", 
+     ylim = c(0, 100), type = "o")
+```
+
+
+```{r}
+# Alternative scree plot of the same data, note data driven y-axis
+barplot(pve, 
+        ylab = "Precent of Variance Explained",
+        names.arg=paste0("PC",1:length(pve)),
+        #because length(pve) is vectorized, it is able to generate a list
+        las=2, #rotation of the text
+        axes = FALSE)
+axis(2, at=pve, labels=round(pve,2))
+#the y-labeled are graphic driven 
+```
+
+```{r}
+## ggplot based graph
+#install.packages("factoextra")
+library(factoextra)
+## Loading required package: ggplot2
+## Welcome! Related Books: `Practical Guide To Cluster Analysis in R` at https://goo.gl/13EFCZ
+fviz_eig(wisc.pr, addlabels = TRUE)
+```
+
+Using the cumsum() function, create a plot of cumulative proportion of variance explained.
+```{r}
+# Plot cumulative proportion of variance explained
+par(mfrow = c(1, 2))
+plot(pve, xlab = "Principal Component", 
+     ylab = "Cumulative Proportion of Variance Explained", 
+      type = "o")
+plot(cumsum(pve), xlab = "Principal Component", 
+     ylab = "Cumulative Proportion of Variance Explained", 
+      type = "o")
+```
+
+
+
+
+*Hierarchical clustering*
+As part of the preparation for hierarchical clustering, the distance between all pairs of observations are computed. Furthermore, there are different ways to link clusters together, with single, complete, and average being the most common linkage methods
+
+
+```{r}
+data.scaled <- scale(wisc.data)
+data.dist <- dist(data.scaled)
+wisc.hclust <- hclust(data.dist, method='complete')
+plot(wisc.hclust)
+grp3 <- cutree(wisc.hclust,k=3)
+grp3
+table(grp3)
+abline(grp3, col="red", lty=2)
+```
+
+**Clustering based on PCs**
+```{r}
+d <- dist(wisc.pr$x[,1:2])
+hc <- hclust(d,method="ward.D2")
+plot(hc)
+
+grp3 <- cutree(hc,3)
+table(grp3)
+
+
+plot(wisc.pr$x[,1],wisc.pr$x[,2],
+     xlab='PC1', ylab='PC2',
+     col=grp3)
+```
+
+
+
+```{r}
+#table(grp3,)
+diagnosis<- wisc.df$diagnosis =='M'
+table(grp3,diagnosis)
+#vast majority of noncancerous patients are in group3, malignant ones are in group1
+```
+```{r}
+url <- "new_samples.csv"
+url <- "https://tinyurl.com/new-samples-CSV"
+new <- read.csv(url)
+npc <- predict(wisc.pr, newdata=new)
+npc
+```
+```{r}
+plot(wisc.pr$x[,1:2],col=wisc.df$diagnosis)
+points(npc[,1],npc[,2],col="blue",pch=15,cex=1)
+#this basically means we need to follow up with patient2
+```
+

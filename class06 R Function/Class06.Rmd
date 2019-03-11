@@ -1,0 +1,116 @@
+---
+title: "Class06"
+author: "Phoebe He"
+date: "1/25/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## File reading(again!)
+
+Here we try to use **read.table()** and friends to input some example data in to R
+lets insert a code chunk.
+```{r}
+data1 <- read.csv("https://bioboot.github.io/bggn213_S18/class-material/test1.txt")
+data2 <- read.table('test2.txt',sep='$',header =T)
+data3 <- read.table('test3.txt')
+```
+
+Try assign a function
+```{r}
+df <- data.frame(a=1:10, b=seq(200,400,length=10),c=11:20,d=NA) 
+df
+normalize <- function(a) {
+  a <- (a - min(a)) / (max(a) - min(a))
+}
+df$a <- normalize(df$a)
+df$b <- normalize(df$b)
+df$c <- normalize(df$c)
+df
+```
+
+Next try to optimize the function
+```{r}
+df <- data.frame(a=1:10, b=seq(200,400,length=10),c=11:20,d=NA) 
+df
+rescale <- function(x) {
+ rng <-range(x)
+ (x - rng[1]) / (rng[2] - rng[1])
+}
+df$a <- normalize(df$a)
+df$b <- normalize(df$b)
+df$c <- normalize(df$c)
+df
+```
+```{r}
+rescale2 <- function(x) {
+ rng <-range(x,na.rm=T)
+ (x - rng[1]) / (rng[2] - rng[1])
+}
+rescale2(c(1,2,NA,3,10))
+```
+
+Another way to optimize things
+```{r}
+rescale3 <- function(x, na.rm=TRUE, plot=FALSE) {
+  if(na.rm) {
+    rng <-range(x, na.rm=T)
+  } else {
+    rng <-range(x)
+  }
+  print("Hello")
+  answer <- (x - rng[1]) / (rng[2] - rng[1])
+  #return(answer)
+  print("is it me you are looking for?")
+  if(plot) {
+    print("please don't ever sing again")
+  }
+  plot(answer, typ="b", lwd=4)
+  print("I can see it in ...")
+  return(answer)
+}
+rescale3(1:10,plot=TRUE)
+```
+ 
+
+Section B
+```{r}
+library(bio3d)
+s1 <- read.pdb("4AKE") # kinase with drug
+s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+s1.b <- s1.chainA$atom$b
+plotb3(s1.b, 
+       sse=s1.chainA,
+       typ="l", ylab="Bfactor")
+```
+Now turn this into a function
+```{r}
+library(bio3d)
+plot_pdb <- function(x) {
+  s1 <- read.pdb(x) # kinase with drug
+  s1.chainA <- trim.pdb(s1, chain="A", elety="CA")
+  s1.b <- s1.chainA$atom$b
+  plotb3(s1.b, 
+         sse=s1.chainA,
+         typ="l", ylab="Bfactor")
+}
+plot_pdb("4AKE")
+plot_pdb("1AKE") 
+plot_pdb("1E4Y")
+
+plotb3(s1.b, 
+       sse=s1.chainA,
+       typ="l", ylab="Bfactor", col="blue")
+points(s2.b, typ='l',col="purple")
+
+```
+
+
+
+
+The number of atoms in this pdb is **`r nrow(s1$atom)`**
+
+

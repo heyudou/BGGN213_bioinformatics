@@ -1,0 +1,182 @@
+---
+title: "ML_class8"
+author: "Phoebe He"
+date: "2/6/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+** Clustering**
+
+*K-means clustering*
+```{r}
+# Generate some example data for clustering
+tmp <- c(rnorm(30,-3), rnorm(30,3))
+x <- cbind(x=tmp, y=rev(tmp))
+plot(x)
+```
+```{r}
+km <- kmeans(x,2,nstart=20)
+km
+```
+Size of Clusters
+```{r}
+km$size
+km$cluster
+plot(x,col=km$cluster)
+points(km$centers,col='blue',pch=18,cex=2)
+```
+
+*Hierarchical clustering*
+
+```{r}
+# First we need to calculate point (dis)similarity
+#   as the Euclidean distance between observations
+dist_matrix <- dist(x)
+# The hclust() function returns a hierarchical
+#  clustering model
+hc <- hclust(d = dist_matrix)
+# the print method is not so useful here
+hc
+```
+
+
+```{r}
+plot(hc)
+abline(h=6,col='red')
+abline(h=2.5,col='blue')
+grp2 <- cutree(hc,h=6)
+grp6 <- cutree(hc,h=2.5)
+table(grp6)
+```
+
+```{r}
+plot(x,col=grp2)
+```
+#using different linkage methods in R
+
+```{r}
+d <- dist_matrix
+
+hc.complete <- hclust(d, method="complete")
+plot(hc.complete)
+hc.average  <- hclust(d, method="average")
+plot(hc.average)
+hc.single   <- hclust(d, method="single")
+plot(hc.single)
+```
+
+
+made up overlapping data a bit more rell
+```{r}
+# Step 1. Generate some example data for clustering
+a <- rbind(
+  matrix(rnorm(100, mean=0, sd = 0.3), ncol = 2),   # c1
+  matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2), # c2
+  matrix(c(rnorm(50, mean = 1, sd = 0.3),           # c3
+           rnorm(50, mean = 0, sd = 0.3)), ncol = 2))
+colnames(a) <- c("x", "y")
+# Step 2. Plot the data without clustering
+plot(a)
+# Step 3. Generate colors for known clusters
+#         (just so we can compare to hclust results)
+col <- as.factor( rep(c("c1","c2","c3"), each=50) )
+plot(a, col=col)
+points(km$centers,col='blue',pch=18,cex=2)
+```
+
+
+```{r}
+plot(a, col=col)
+a.hc<- hclust(dist(a))
+plot(a.hc)
+grps3 <- cutree(a.hc,3)
+plot(a,col=grps3)
+```
+
+*Principal Component Analysis (PCA)*
+```{r}
+mydata <- read.csv("https://tinyurl.com/expression-CSV",
+row.names=1)
+head(mydata)
+```
+*NOTE* prcomp() expects the samples to be rows and genes to be columns so we need to first transpose the matrix with the t() function!
+
+```{r}
+pca <- prcomp(t(mydata),scale=TRUE)
+summary(pca)
+```
+square of the standard deviation is the variation
+```{r}
+dim(pca$x)
+plot(pca$x[,1],pca$x[,2],
+     xlab="PC1",ylab="PC2",
+     ylim=c(-10,10))
+```
+
+
+```{r}
+#percent variance is often more informative to look at
+pca.var <- pca$sdev^2
+pca.var.per <- round(pca.var/sum(pca.var)*100, 1)
+barplot(pca.var.per, main="Scree Plot",
+        xlab="Principal Component", ylab="Percent Variation")
+
+```
+
+Make our PCA plot nice
+```{r}
+## A vector of colors for wt and ko samples
+colvec <- as.factor( substr( colnames(mydata), 1, 2) )
+plot(pca$x[,1], pca$x[,2], col=colvec, pch=16,
+     xlab=paste0("PC1 (", pca.var.per[1], "%)"),
+     ylab=paste0("PC2 (", pca.var.per[2], "%)"))
+```
+
+
+
+**PCA exercise**
+```{r}
+ukf<- read.csv('/Users/phoebehe/Desktop/BGGN213/class08 ML/UK_foods.csv')
+dim(ukf)
+# Note how the minus indexing works
+rownames(ukf) <- ukf[,1]
+ukf <- ukf[,-1]
+head(ukf)
+dim(ukf)
+
+#assign row names from the first col of the data upon reading.
+ukf <- read.csv('/Users/phoebehe/Desktop/BGGN213/class08 ML/UK_foods.csv',row.names=1)
+```
+
+```{r}
+barplot(as.matrix(ukf), beside=T, col=rainbow(nrow(ukf)))
+barplot(as.matrix(ukf), beside=F, col=rainbow(nrow(ukf)))
+pairs(ukf, col=rainbow(10), pch=16)
+```
+
+```{r}
+pca <- prcomp( t(ukf) )
+summary(pca)
+plot(pca$x[,1],pca$x[,2], xlab="PC1", ylab="PC2", xlim=c(-270,500))
+text(pca$x[,1], pca$x[,2], labels=colnames(ukf),col=c("orange","red","blue","green"))
+```
+
+```{r}
+v <- round( pca$sdev^2/sum(pca$sdev^2) * 100 )
+v
+z <- summary(pca)
+z$importance
+barplot(v, xlab="Principal Component", ylab="Percent Variation")
+```
+
+
+```{r}
+## Lets focus on PC1 as it accounts for > 90% of variance 
+par(mar=c(10, 3, 0.35, 0))
+barplot( pca$rotation[,1], las=2 )
+```
+
