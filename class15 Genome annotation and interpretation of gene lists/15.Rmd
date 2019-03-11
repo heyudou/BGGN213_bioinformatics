@@ -1,0 +1,179 @@
+---
+title: "class15"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Differential Expression Analysis😔😔😁😳😏😏
+```{r}
+library(DESeq2)
+metaFile <- "data/GSE37704_metadata.csv"
+countFile <- "data/GSE37704_featurecounts.csv"
+
+# Import metadata and take a peak
+colData = read.csv(metaFile, row.names=1)
+head(colData)
+# Import countdata
+countData = read.csv(countFile, row.names=1)
+head(countData)
+
+# How many genes
+nrow(countData)
+
+# Note we need to remove the odd first $length col
+countData <- as.matrix(countData[,-1])
+head(countData)
+
+# Check the format
+all(rownames(colData) == colnames(countData))
+
+# Filter count data where you have 0 read count across all samples.
+filter <- rowSums(countData) != 0
+countData = countData[filter, ]
+head(countData)
+
+# How many genes do we have left?
+geneleft <- nrow(countData)
+paste("We now have", geneleft, "genes remaining in our dataset")
+```
+
+```{r}
+# Run DESeq!
+
+dds <- DESeqDataSetFromMatrix(countData = countData,
+                              colData = colData,
+                              design = ~condition)
+dds = DESeq(dds)
+res = results(dds, contrast=c("condition", "hoxa1_kd", "control_sirna"))
+
+```
+```{r}
+# Vocolno plot
+mycols <- rep("pink", nrow(res))
+mycols[ abs(res$log2FoldChange) >2] <- "red"
+selects <- (res$pvalue < 0.01) & (abs(res$log2FoldChange) >2)
+mycols[selects] <- "yellow"
+plot( res$log2FoldChange, -log(res$padj), col=mycols)
+```
+
+```{r}
+# Output
+write.csv(res)
+```
+
+```{r}
+# Annotation
+library("AnnotationDbi")
+library("org.Hs.eg.db")
+
+columns(org.Hs.eg.db)
+
+res$symbol = mapIds(org.Hs.eg.db,
+                    keys=row.names(res), 
+                    keytype="ENSEMBL",
+                    column="SYMBOL",
+                    multiVals="first")
+
+res$entrez = mapIds(org.Hs.eg.db,
+                    keys=row.names(res),
+                    keytype="ENSEMBL",
+                    column="ENTREZID",
+                    multiVals="first")
+
+res$name =   mapIds(org.Hs.eg.db,
+                    keys=row.names(res),
+                    keytype="ENSEMBL",
+                    column="GENENAME",
+                    multiVals="first")
+
+head(res, 10)
+```
+
+```{r}
+# Save results
+res = res[order(res$pvalue), ]
+write.csv(res)
+```
+
+```{r eval=FALSE}
+source("http://bioconductor.org/biocLite.R")
+biocLite( c("pathview", "gage", "gageData") )
+```
+
+```{r}
+library(gage)
+library(gageData)
+
+data(kegg.sets.hs)
+data(sigmet.idx.hs)
+
+# Focus on signaling and metabolic pathways only
+kegg.sets.hs = kegg.sets.hs[sigmet.idx.hs]
+
+# Examine the first 3 pathways
+head(kegg.sets.hs, 3)
+```
+
+```{r}
+# Setup the input fot **gage()**
+foldchanges = res$log2FoldChange
+names(foldchanges) = res$entrez
+head(foldchanges)
+```
+```{r}
+# Get the results
+keggres = gage(foldchanges, gsets=kegg.sets.hs)
+attributes(keggres)
+```
+```{r}
+# Look at the first few down (less) pathways
+head(keggres$less)
+```
+
+```{r}
+library(pathview)
+pathview(gene.data=foldchanges, pathway.id="hsa04110")
+```
+![](hsa04110.pathview.png)
+
+```{r}
+## Focus on top 5 upregulated pathways here for demo purposes only
+keggrespathways <- rownames(keggres$greater)[1:5]
+
+# Extract the 8 character long IDs part of each string
+keggresids = substr(keggrespathways, start=1, stop=8)
+keggresids
+pathview(gene.data=foldchanges, pathway.id=keggresids, species="hsa")
+
+```
+![](hsa04630.pathview.png)
+
+## Reactome Analysis
+```{r}
+sig_genes <- res[res$padj <= 0.05 & !is.na(res$padj), "symbol"]
+print(paste("Total number of significant genes:", length(sig_genes)))
+
+# Generate the input file
+write.table(sig_genes, file="significant_genes.txt", row.names=FALSE, col.names=FALSE, quote=FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
