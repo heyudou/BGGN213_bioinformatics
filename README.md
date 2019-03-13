@@ -16,3 +16,4 @@ This is a collection of my work from [BGGN213 at UC San Diego](https://bioboot.g
 - Class14 [RNA-seq data analysis](https://github.com/heyudou/BGGN213_bioinformatics/tree/master/class14%20RNA-seq%20data%20analysis)
 - Class15 [Genome annotation and interpretation of gene lists](https://github.com/heyudou/BGGN213_bioinformatics/tree/master/class15%20Genome%20annotation%20and%20interpretation%20of%20gene%20lists)
 - Class17 [Biological Network Analysis](https://github.com/heyudou/BGGN213_bioinformatics/tree/master/class17%20Biological%20Network%20Analysis)
+- Class18 [Cancer Genomics](https://github.com/heyudou/BGGN213_bioinformatics/tree/master/class18%20Cancer%20Genomics)
